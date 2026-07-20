@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thiệp Cưới</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f8ec;
+      --card: rgba(255,255,255,0.8);
+      --text: #3c4a2e;
+      --muted: #6f8a52;
+      --accent: #93b85f;
+      --accent-dark: #547034;
+      --border: rgba(147,184,95,0.28);
+      --shadow: 0 24px 70px rgba(74,94,46,0.14);
+      --section-gap: 28px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.95), transparent 36%),
+        linear-gradient(180deg, #f9fbf3 0%, var(--bg) 100%);
+      overflow-x: hidden;
+    }
+
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, #f9fbf3, #eaf3dc);
+      display: grid;
+      place-items: center;
+      z-index: 9999;
+      animation: fadeOut 1s ease 2.5s forwards;
+    }
+
+    .loader {
+      text-align: center;
+      color: var(--accent-dark);
+    }
+
+    .loader h2 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 42px;
+      margin: 0 0 10px;
+    }
+
+    .loader p {
+      margin: 0;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    .floating-petals {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .petal {
+      position: absolute;
+      top: -12%;
+      width: 22px;
+      height: 22px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+      opacity: 0.85;
+      filter: drop-shadow(0 2px 4px rgba(147, 184, 95, 0.25));
+      animation: sakuraFall linear infinite;
+      transform-origin: center;
+    }
+
+    @keyframes sakuraFall {
+      0% {
+        transform: translate3d(0, -10vh, 0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      50% {
+        transform: translate3d(35px, 55vh, 0) rotate(180deg);
+      }
+      100% {
+        transform: translate3d(-20px, 115vh, 0) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .music-btn {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 50;
+      border: none;
+      background: linear-gradient(135deg, #93b85f, #547034);
+      color: #fff;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      box-shadow: 0 14px 30px rgba(84,112,52,0.26);
+      cursor: pointer;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 56px 20px 72px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .wrapper {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: var(--section-gap);
+    }
+
+    .hero, .card {
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 84px 28px 70px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.38);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.34em;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    h1, h2 {
+      margin: 0;
+      font-family: "Cormorant Garamond", serif;
+      color: var(--accent-dark);
+    }
+
+    h1 {
+      font-size: clamp(42px, 7vw, 82px);
+      line-height: 1.02;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 22px auto 0;
+      font-size: 18px;
+      line-height: 1.9;
+    }
+
+    .divider {
+      width: 120px;
+      height: 1px;
+      margin: 30px auto 0;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+    }
+
+    .card {
+      padding: 36px 30px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 44px);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .small-label {
+      margin: 0 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.24em;
+      font-size: 12px;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .time-box {
+      padding: 18px 10px;
+      background: rgba(255,255,255,0.65);
+      border: 1px solid rgba(184,138,102,0.18);
+      border-radius: 18px;
+      text-align: center;
+    }
+
+    .time-box strong {
+      display: block;
+      font-size: 30px;
+      color: var(--accent-dark);
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    .time-box span {
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .story, .schedule, .rsvp, .wish {
+      display: grid;
+      gap: 14px;
+    }
+
+    .person-grid, .album-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .person, .photo, .video-box, .map-box, .wish-box, .timeline-item {
+      border-radius: 22px;
+      background: rgba(255,255,255,0.62);
+      border: 1px solid rgba(184,138,102,0.18);
+      overflow: hidden;
+    }
+
+    .person {
+      padding: 18px;
+      text-align: center;
+    }
+
+    .person img, .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .avatar {
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #d9ecc4, #f2f8e9);
+    }
+
+    .timeline-item {
+      padding: 16px 18px;
+      border-left: 3px solid var(--accent);
+      background: rgba(184,138,102,0.06);
+      border-radius: 0 14px 14px 0;
+    }
+
+    .timeline-item strong {
+      display: block;
+      color: var(--accent-dark);
+      margin-bottom: 6px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(184,138,102,0.22);
+      font: inherit;
+      background: rgba(255,255,255,0.75);
+      color: var(--text);
+      outline: none;
+    }
+
+    textarea { min-height: 120px; resize: vertical; }
+
+    .btn {
+      display: inline-block;
+      border: none;
+      padding: 14px 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #93b85f, #547034);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 14px 0 4px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .person-grid, .album-grid, .form-grid, .countdown {
+        grid-template-columns: 1fr;
+      }
+      .hero { padding: 68px 20px 56px; }
+      .card { padding: 28px 18px; }
+      .lead { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="loading-screen">
+    <div class="loader">
+      <h2>Our Wedding</h2>
+      <p>Loading love story...</p>
+    </div>
+  </div>
+
+  <div class="floating-petals" id="petals"></div>
+
+  <button class="music-btn" id="musicBtn">♫</button>
+  <audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg" />
+  </audio>
+
+  <main class="page">
+    <div class="wrapper">
+      <section class="hero" style="background-image:url('https://lh3.googleusercontent.com/d/1HtTBwgUu3bFi1ccwixW45nQPYaEE96HT=w1600');">
+        <div class="hero-content">
+          <p class="eyebrow">Wedding Invitation</p>
+          <h1>Chúng mình sẽ nên duyên vợ chồng</h1>
+          <p class="lead">Rất mong được đón tiếp và chia vui cùng gia đình, bạn bè gần xa trong ngày trọng đại của chúng mình.</p>
+          <div class="divider"></div>
+          <div class="countdown" id="countdown">
+            <div class="time-box"><strong id="d">00</strong><span>Ngày</span></div>
+            <div class="time-box"><strong id="h">00</strong><span>Giờ</span></div>
+            <div class="time-box"><strong id="m">00</strong><span>Phút</span></div>
+            <div class="time-box"><strong id="s">00</strong><span>Giây</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-2">
+        <div class="card">
+          <p class="small-label">Love Story</p>
+          <h2 class="section-title">Hành trình của chúng mình</h2>
+          <div class="story">
+            <div class="timeline-item"><strong>Gặp nhau</strong> Những ngày đầu bình yên và giản dị.</div>
+            <div class="timeline-item"><strong>Hiểu nhau</strong> Cùng chia sẻ, cùng vun đắp, cùng trưởng thành.</div>
+            <div class="timeline-item"><strong>Nên duyên</strong> Chính thức bắt đầu hành trình gia đình mới.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="small-label">Cô dâu & Chú rể</p>
+          <h2 class="section-title">Hai trái tim, một mái nhà</h2>
+          <div class="person-grid">
+            <div class="person">
+              <div class="avatar">
+                <img src="https://lh3.googleusercontent.com/d/1VjdzAHxOUkpwdtfqBmcAPZnJZ5v8Dfdq=w800" alt="Cô dâu" loading="lazy">
+              </div>
+              <strong>Cô dâu</strong>
+              <p>Điềm đạm, yêu hoa và những điều giản dị.</p>
+            </div>
+            <div class="person">
+              <div class="avatar">
+                <img src="https://lh3.googleusercontent.com/d/1tDNZzv3QBYDX-QmQQSldA5-OMLNefJnO=w800" alt="Chú rể" loading="lazy">
+              </div>
+              <strong>Chú rể</strong>
+              <p>Kiên định, chân thành và luôn đặt gia đình lên trên hết.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <p class="small-label">Album ảnh</p>
+        <h2 class="section-title">Khoảnh khắc đẹp</h2>
+        <div class="album-grid">
+          <div class="photo"><img src="https://lh3.googleusercontent.com/d/1HtTBwgUu3bFi1ccwixW45nQPYaEE96HT=w1000" alt="Khoảnh khắc 1" loading="lazy"></div>
+          <div class="photo"><img src="https://lh3.googleusercontent.com/d/1k8flJ9VEDjXnOuLpLyoStrOjcYVvdpsY=w1000" alt="Khoảnh khắc 2" loading="lazy"></div>
+          <div class="photo"><img src="https://lh3.googleusercontent.com/d/1PYPbix9cdmiMofhBRmYZIKLvZMTacr-H=w1000" alt="Khoảnh khắc 3" loading="lazy"></div>
+          <div class="photo"><img src="https://lh3.googleusercontent.com/d/1I2JfPbCJI7DYuIICN3MxtP3sQ8NiD8rK=w1000" alt="Khoảnh khắc 4" loading="lazy"></div>
+        </div>
+      </section>
+
+      <section class="grid-2">
+        <div class="card">
+          <p class="small-label">Video cưới</p>
+          <h2 class="section-title">Thước phim của tình yêu</h2>
+          <div class="video-box" style="aspect-ratio:16/9;">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/rsYbcnR_298" title="Video cưới" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="small-label">Lịch trình</p>
+          <h2 class="section-title">Ngày vui của chúng mình</h2>
+          <div class="schedule">
+            <div class="timeline-item"><strong>08:00</strong> Đón khách</div>
+            <div class="timeline-item"><strong>09:00</strong> Nghi lễ thành hôn</div>
+            <div class="timeline-item"><strong>10:00</strong> Tiệc cưới & chụp hình lưu niệm</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-2">
+        <div class="card">
+          <p class="small-label">Địa điểm</p>
+          <h2 class="section-title">Google Maps</h2>
+          <div class="map-box" style="height:300px;">
+            <iframe src="https://www.google.com/maps?q=11.735306,107.645083&z=16&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="small-label">Lời cảm ơn</p>
+          <h2 class="section-title">Gửi lời chúc yêu thương</h2>
+          <p style="text-align:center; line-height:1.9; margin-top: 8px;">
+            Sự hiện diện của gia đình và bạn bè là niềm hạnh phúc lớn nhất đối với chúng mình trong ngày trọng đại này.
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <p class="small-label">RSVP</p>
+        <h2 class="section-title">Xác nhận tham dự</h2>
+        <div class="rsvp">
+          <div class="form-grid">
+            <input type="text" placeholder="Họ và tên" />
+            <input type="tel" placeholder="Số điện thoại" />
+          </div>
+          <div class="form-grid">
+            <input type="number" placeholder="Số lượng tham dự" />
+            <input type="text" placeholder="Tôi tham dự: Nhà trai / Nhà gái" />
+          </div>
+          <textarea placeholder="Lời nhắn gửi tới cô dâu chú rể"></textarea>
+          <a class="btn" href="#">Gửi xác nhận</a>
+        </div>
+      </section>
+
+      <section class="card">
+        <p class="small-label">Lời chúc</p>
+        <h2 class="section-title">Cùng lưu lại yêu thương</h2>
+        <div class="wish-box" style="padding:18px;">
+          <textarea placeholder="Viết lời chúc của bạn..."></textarea>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>Thank you for being part of our special day.</p>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    const countdownDate = new Date("2026-12-31T09:00:00");
+    const d = document.getElementById("d"), h = document.getElementById("h"), m = document.getElementById("m"), s = document.getElementById("s");
+    function updateCountdown() {
+      const diff = countdownDate - new Date();
+      const days = Math.max(0, Math.floor(diff / 86400000));
+      const hours = Math.max(0, Math.floor((diff % 86400000) / 3600000));
+      const mins = Math.max(0, Math.floor((diff % 3600000) / 60000));
+      const secs = Math.max(0, Math.floor((diff % 60000) / 1000));
+      d.textContent = String(days).padStart(2, "0");
+      h.textContent = String(hours).padStart(2, "0");
+      m.textContent = String(mins).padStart(2, "0");
+      s.textContent = String(secs).padStart(2, "0");
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    const petals = document.getElementById("petals");
+    const petalColors = [
+      { fill: "#fdfcf6", edge: "#dcefc0" },
+      { fill: "#eef7de", edge: "#b9dd88" },
+      { fill: "#f7fbee", edge: "#cbe6a3" }
+    ];
+    function makeFlowerSVG(c) {
+      const petal = `<path d="M20 20 C13 16 12 7 20 2 C28 7 27 16 20 20 Z" fill="${c.fill}" stroke="${c.edge}" stroke-width="0.6"/>`;
+      let petals5 = "";
+      for (let i = 0; i < 5; i++) {
+        petals5 += `<g transform="rotate(${i * 72} 20 20)">${petal}</g>`;
+      }
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">${petals5}<circle cx="20" cy="20" r="3.4" fill="#e3b869"/><circle cx="20" cy="20" r="3.4" fill="none" stroke="#c9944a" stroke-width="0.5"/></svg>`;
+      return "url('data:image/svg+xml;utf8," + encodeURIComponent(svg) + "')";
+    }
+    for (let i = 0; i < 28; i++) {
+      const p = document.createElement("div");
+      p.className = "petal";
+      const c = petalColors[i % petalColors.length];
+      p.style.backgroundImage = makeFlowerSVG(c);
+      const size = 14 + Math.random() * 12;
+      p.style.width = size + "px";
+      p.style.height = size + "px";
+      p.style.left = Math.random() * 100 + "vw";
+      p.style.animationDuration = (10 + Math.random() * 8) + "s";
+      p.style.animationDelay = (-Math.random() * 14) + "s";
+      p.style.transform = `scale(${0.65 + Math.random() * 0.9}) rotate(${Math.random() * 180}deg)`;
+      p.style.opacity = (0.55 + Math.random() * 0.35).toFixed(2);
+      petals.appendChild(p);
+    }
+
+    const musicBtn = document.getElementById("musicBtn");
+    const bgMusic = document.getElementById("bgMusic");
+    let playing = false;
+    musicBtn.addEventListener("click", async () => {
+      if (!playing) {
+        try { await bgMusic.play(); playing = true; musicBtn.textContent = "❚❚"; } catch(e) {}
+      } else {
+        bgMusic.pause();
+        playing = false;
+        musicBtn.textContent = "♫";
+      }
+    });
+  </script>
+</body>
+</html>
